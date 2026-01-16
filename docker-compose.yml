@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # Service 1: Database (Asumsi Anda pakai MySQL/Postgres berdasarkan struktur Sequelize)
+  db:
+    image: mysql:8.0 # Ganti ke postgres:latest jika pakai postgres
+    container_name: finance_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: finance_tracker
+    ports:
+      - "3307:3306" # Mapping port DB ke host (opsional)
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # Service 2: Backend API
+  backend:
+    build: ./backend
+    container_name: finance_backend
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=db # Penting! Ini nama service database di atas
+      - DB_USER=root
+      - DB_PASS=rootpassword
+      - DB_NAME=finance_tracker
+      - PORT=5000
+      - JWT_SECRET=your-super-secret-jwt-key
+      - JWT_EXPIRES_IN=7d
+      - ENCRYPTION_KEY=your-32-character-encryption-key-here
+      - SESSION_TIMEOUT=30
+      - NODE_ENV=development
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app # Hot-reload: perubahan kode lokal langsung update di container
+      - /app/node_modules # Mencegah node_modules lokal menimpa container
+      - ./backend/uploads:/app/uploads # Agar file upload persisten
+
+  # Service 3: Frontend React/Vite
+  frontend:
+    build: ./frontend
+    container_name: finance_frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5000 # URL backend dari sisi Browser
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app # Hot-reload frontend
+      - /app/node_modules
+
+volumes:
+  db_data:
