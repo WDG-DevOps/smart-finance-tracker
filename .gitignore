@@ -31,5 +31,3 @@ backend/uploads/*
 # Database
 *.sqlite
 *.db
-
-k8s/

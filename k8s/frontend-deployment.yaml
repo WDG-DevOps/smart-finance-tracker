@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: apanyaclay/smart-finance-frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5173
+        # Opsional: Jika Anda butuh environment variable di frontend
+        env:
+        - name: VITE_API_URL
+          value: "http://localhost:5000" 
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "300m"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5173
+  type: LoadBalancer
