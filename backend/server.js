@@ -60,7 +60,7 @@ app.use('/api/analytics', analyticsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Smart Finance Tracker API is running' });
+  res.json({ status: 'OK', message: 'Smart Finance Tracker API is running today' });
 });
 
 // Inisialisasi pengumpulan metrik default (CPU, Memory, dll)
