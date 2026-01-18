@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: backend-monitor
+  labels:
+    release: monitoring # Nama release helm Anda
+spec:
+  selector:
+    matchLabels:
+      app: backend # Harus sama dengan label di service backend
+  endpoints:
+  - port: web # Sesuaikan dengan nama port di Service backend-service Anda
+    path: /metrics

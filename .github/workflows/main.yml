@@ -63,6 +63,7 @@ jobs:
           kubectl apply -f k8s/backend-deployment.yaml
           kubectl apply -f k8s/frontend-deployment.yaml
           kubectl apply -f k8s/backend-hpa.yaml
+          kubectl apply -f k8s/backend-monitor.yaml
           
           # Force rollout agar pod menggunakan image terbaru
           kubectl rollout restart deployment/backend
