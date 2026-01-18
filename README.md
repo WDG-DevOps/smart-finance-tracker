@@ -1,6 +1,6 @@
 # Smart Finance Tracker
 
-Aplikasi manajemen keuangan pribadi yang komprehensif dengan fitur AI, OCR, dan analitik canggih.
+Aplikasi manajemen keuangan pribadi yang komprehensif dengan fitur analitik canggih.
 
 ## 🚀 Fitur Utama
 
@@ -17,19 +17,13 @@ Aplikasi manajemen keuangan pribadi yang komprehensif dengan fitur AI, OCR, dan 
 - **Financial Goals**: Target tabungan dengan perhitungan otomatis
 - **Kalender Keuangan**: Tampilan kalender untuk tagihan dan gaji
 
-### 3. Modul AI & Otomatisasi
-- **Smart Categorization**: AI otomatis mengkategorikan transaksi
-- **Receipt Scanning (OCR)**: Ekstrak data dari foto struk
-- **Anomaly Detection**: Alert pengeluaran tidak wajar
-- **Forecasting**: Prediksi saldo akhir bulan
-
-### 4. Modul Laporan & Analitik
+### 3. Modul Laporan & Analitik
 - **Dashboard Interaktif**: Grafik pie chart dan line chart
 - **Laporan Net Worth**: Tracking kekayaan bersih
 - **Comparison**: Bandingkan pengeluaran bulan ini vs bulan lalu
 - **Export Data**: Download laporan PDF/Excel (coming soon)
 
-### 5. Modul Keamanan & Privasi
+### 4. Modul Keamanan & Privasi
 - **App Lock**: PIN protection
 - **Privacy Mode**: Sembunyikan nominal uang di tempat umum
 - **End-to-End Encryption**: Enkripsi data sensitif
@@ -42,7 +36,6 @@ Aplikasi manajemen keuangan pribadi yang komprehensif dengan fitur AI, OCR, dan 
 - MySQL dengan Sequelize ORM
 - Socket.io untuk real-time
 - JWT + Bcrypt untuk autentikasi
-- Tesseract.js untuk OCR
 
 ### Frontend
 - React.js dengan Vite
@@ -53,12 +46,46 @@ Aplikasi manajemen keuangan pribadi yang komprehensif dengan fitur AI, OCR, dan 
 
 ## 📦 Instalasi
 
-### Prerequisites
+### Menggunakan Docker (Direkomendasikan)
+
+Proyek ini mendukung Docker Compose untuk setup cepat:
+
+```bash
+docker-compose up --build
+```
+
+Ini akan menjalankan kontainer MySQL (port 3307), Backend (port 5000), dan Frontend (port 5173) secara otomatis.
+
+### Menggunakan Kubernetes
+Jalankan di terminal folder proyek
+
+```
+kubectl apply -f k8s/secrets.yaml
+kubectl apply -f k8s/mysql-deployment.yaml
+kubectl apply -f k8s/backend-deployment.yaml
+kubectl apply -f k8s/frontend-deployment.yaml
+kubectl apply -f k8s/backend-hpa.yaml
+kubectl apply -f k8s/backend-monitor.yaml
+```
+
+Jalankan di CMD dengan Run Administrator
+
+```
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install monitoring prometheus-community/kube-prometheus-stack
+kubectl port-forward deployment/monitoring-grafana 3000:3000
+kubectl port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090
+```
+
+### Setup Manual
+
+#### Prerequisites
 - Node.js (v18+)
 - MySQL (v8+)
 - npm atau yarn
 
-### Backend Setup
+#### Backend Setup
 
 1. Masuk ke folder backend:
 ```bash
@@ -105,7 +132,7 @@ npm run dev
 
 Server akan berjalan di `http://localhost:5000`
 
-### Frontend Setup
+#### Frontend Setup
 
 1. Masuk ke folder frontend:
 ```bash
@@ -131,27 +158,9 @@ Frontend akan berjalan di `http://localhost:5173`
 
 ## 📁 Struktur Project
 
-```
-smart-finance-tracker/
-├── backend/
-│   ├── config/          # Konfigurasi database
-│   ├── controllers/      # Business logic
-│   ├── models/           # Sequelize models
-│   ├── routes/           # API routes
-│   ├── middlewares/      # Auth, upload, dll
-│   ├── services/         # OCR service
-│   ├── utils/            # Helper functions
-│   └── server.js         # Entry point
-├── frontend/
-│   ├── src/
-│   │   ├── components/   # React components
-│   │   ├── pages/        # Page components
-│   │   ├── context/      # React Context
-│   │   ├── services/     # API services
-│   │   └── App.jsx       # Main app
-│   └── public/           # Static files
-└── README.md
-```
+* `backend/`: Express API, Sequelize models.
+* `frontend/`: React application, Vite config, Tailwind styling.
+* `k8s/`: Konfigurasi deployment untuk Kubernetes.
 
 ## 🔐 API Endpoints
 
@@ -196,9 +205,6 @@ smart-finance-tracker/
 - `GET /api/analytics/dashboard` - Get dashboard data
 - `GET /api/analytics/cash-flow` - Get cash flow data
 - `GET /api/analytics/category-report` - Get category report
-
-### OCR
-- `POST /api/ocr/scan` - Scan receipt image
 
 ## 🎯 Penggunaan
 
