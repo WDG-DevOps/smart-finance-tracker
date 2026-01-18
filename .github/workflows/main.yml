@@ -47,3 +47,23 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/smart-finance-frontend:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/smart-finance-frontend:${{ github.sha }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: self-hosted # Menggunakan runner di PC lokal Anda
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Local Kubernetes
+        run: |
+          # Melakukan update image dengan tag commit terbaru
+          kubectl apply -f k8s/secrets.yaml
+          kubectl apply -f k8s/mysql-deployment.yaml
+          kubectl apply -f k8s/backend-deployment.yaml
+          kubectl apply -f k8s/frontend-deployment.yaml
+          kubectl apply -f k8s/backend-hpa.yaml
+          
+          # Force rollout agar pod menggunakan image terbaru
+          kubectl rollout restart deployment/backend
+          kubectl rollout restart deployment/frontend

@@ -6,6 +6,7 @@ import { Server } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import client from 'prom-client';
 
 // Import routes
 import authRoutes from './routes/authRoutes.js';
@@ -60,6 +61,16 @@ app.use('/api/analytics', analyticsRoutes);
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Smart Finance Tracker API is running' });
+});
+
+// Inisialisasi pengumpulan metrik default (CPU, Memory, dll)
+const register = new client.Registry();
+client.collectDefaultMetrics({ register });
+
+// Tambahkan endpoint /metrics
+app.get('/metrics', async (req, res) => {
+  res.setHeader('Content-Type', register.contentType);
+  res.send(await register.metrics());
 });
 
 // Socket.io for real-time notifications
